@@ -1,12 +1,15 @@
 var moment = require("moment-timezone");
 var crypto = require("crypto");
+var secret = require("./config/secret");
 
 moment.tz.setDefault("Asia/Seoul");
 
-module.exports.log = function(caller, msg, args, msg_color) {
+var jwt = require("jsonwebtoken");
+
+module.exports.log = function (caller, msg, args, msg_color) {
     var date = moment().format("YYYY-MM-DD HH:mm:ss");
 
-    switch(msg_color) {
+    switch (msg_color) {
         case "r": //red
             msg_color = "\x1b[31m";
             break;
@@ -24,7 +27,7 @@ module.exports.log = function(caller, msg, args, msg_color) {
     if (msg === undefined) {
         msg = "";
     }
-    
+
     if (args === undefined) {
         args = "";
     }
@@ -36,19 +39,54 @@ module.exports.log = function(caller, msg, args, msg_color) {
     }
 }
 
-module.exports.hash = function(string, salt) {
+module.exports.hash = function (string, salt) {
     return crypto.pbkdf2Sync(string, salt, 654321, 32, "sha256").toString("Base64");
 }
 
-module.exports.createNewSalt = function() {
+module.exports.createNewSalt = function () {
     return crypto.randomBytes(32).toString("Base64");
 }
 
-module.exports.isEmail = function(string) {
+module.exports.isEmail = function (string) {
     var email_regExp = /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
     return email_regExp.test(string);
 }
 
-module.exports.createNewCode = function() {
+module.exports.createNewCode = function () {
     return crypto.randomBytes(6).toString("Base64");
 }
+
+module.exports.createNewToken = function (user_id) {
+    return jwt.sign(
+        {
+            "user_id": user_id
+        },
+        secret.jwt_secret,
+        {
+            expiresIn: 300,
+            issuer: "snoot",
+            audience: String(user_id)
+        }
+    );
+}
+
+module.exports.verifyToken = function (token, user_id) {
+    try {
+        var decoded = jwt.verify(token, secret.jwt_secret);
+        if (decoded.user_id == user_id) {
+            return this.SUCCESS;
+        }
+
+        return this.ERROR_INVALID_TOKEN;
+    } catch (e) {
+        if (e.name == "TokenExpiredError") {
+            return this.ERROR_EXPIRED_TOKEN;
+        }
+
+        return this.ERROR_INVALID_TOKEN;
+    }
+}
+
+module.exports.SUCCESS = 0;
+module.exports.ERROR_EXPIRED_TOKEN = 1;
+module.exports.ERROR_INVALID_TOKEN = 2;

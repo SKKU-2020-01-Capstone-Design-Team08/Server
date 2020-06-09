@@ -1,11 +1,11 @@
 var http = require("http");
 var express = require("express");
 var app = express();
-var session = require("express-session");
+//var session = require("express-session");
+//var secret = require("./config/secret");
 var bodyParser = require("body-parser");
 
-var secret = require("./config/secret");
-
+/*
 app.use(session({
     secret: secret.session_secret,
     resave: false,
@@ -13,7 +13,7 @@ app.use(session({
     cookie: {
         maxAge: 1000 * 60 * 5 //Cookie valid for 5 min
     }
-}));
+}));*/
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
