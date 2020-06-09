@@ -17,6 +17,8 @@ router.use("/upload-img", require("./controllers/upload-img"));
 
 router.get("/download-img", require("./controllers/download-img"));
 
+router.get("/set-location", require("./controllers/set-location"));
+
 router.post("/test", require("./controllers/test"));
 
 module.exports = router;

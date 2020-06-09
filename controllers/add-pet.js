@@ -7,11 +7,10 @@ var connection = new sync_mysql(db_config);
 
 module.exports = function (req, res, next) {
     var logger_caller = "/add-pet(POST)";
-    var logger_args = { "user_id": req.body.user_id, "email": req.body.email, "name": req.body.name, "species": req.body.species, "description": req.body.description, "arduino_mac": req.body.arduino_mac, "pi_mac": req.body.pi_mac, "token": req.headers["x-access-token"] };
+    var logger_args = { "user_id": req.body.user_id, "name": req.body.name, "species": req.body.species, "description": req.body.description, "arduino_mac": req.body.arduino_mac, "pi_mac": req.body.pi_mac, "token": req.headers["x-access-token"] };
 
     var token = req.headers["x-access-token"];
     var user_id = req.body.user_id;
-    var email = req.body.email;
     var name = req.body.name;
     var species = req.body.species;
     var description = req.body.description;
@@ -37,7 +36,6 @@ module.exports = function (req, res, next) {
     }
 
     if(user_id === undefined || user_id.length == 0
-        || email === undefined || email.length == 0 || !utils.isEmail(email)
         || name === undefined || name.length == 0
         || species === undefined || species.length == 0
         || arduino_mac === undefined || arduino_mac.length != 17
@@ -48,14 +46,6 @@ module.exports = function (req, res, next) {
     }
 
     try {
-        var qresult;
-        qresult = connection.query("SELECT email FROM User WHERE id=" + mysql.escape(user_id));
-        if(qresult.length == 0) {
-            utils.log(logger_caller, "Error - Invalid params", logger_args, "y");
-            res.sendStatus(401);
-            return;
-        }
-
         connection.query("INSERT INTO " + 
                             "Pet(user_id, name, species, description, arduino_mac, pi_mac) " + 
                         "VALUES (" +
@@ -66,7 +56,7 @@ module.exports = function (req, res, next) {
                             mysql.escape(arduino_mac) + ", " +
                             mysql.escape(pi_mac) + ")");
 
-        qresult = connection.query("SELECT LAST_INSERT_ID() as pet_id");
+        var qresult = connection.query("SELECT LAST_INSERT_ID() as pet_id");
         var pet_id = qresult[0]["pet_id"];
 
         utils.log(logger_caller, "Success", logger_args);

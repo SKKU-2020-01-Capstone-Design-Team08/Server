@@ -52,6 +52,64 @@ module.exports.isEmail = function (string) {
     return email_regExp.test(string);
 }
 
+module.exports.getDate = function(string) {
+    var datetime_regExp = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/;
+    if(!datetime_regExp.test(string)) return undefined;
+
+    var temp, date_str, time_str, year, date, month, hour, minute, second;
+    temp = string.split(" ");
+    date_str = temp[0];
+    time_str = temp[1];
+
+    temp = date_str.split("-");
+    year = Number(temp[0]);
+    month = Number(temp[1]);
+    date = Number(temp[2]);
+
+    temp = time_str.split(":");
+    hour = Number(temp[0]);
+    minute = Number(temp[1]);
+    second = Number(temp[2]);
+
+    var isLeapyear = false;
+    if( ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0) ) {
+        isLeapyear = true;
+    }
+
+    if(month < 1 || month > 12) return undefined;
+
+    if(date < 1) return undefined;
+    switch(month) {
+        case 1:
+        case 3:
+        case 5:
+        case 7:
+        case 8:
+        case 10:
+        case 12:
+            if(date > 31) return undefined;
+            break;
+        case 4:
+        case 6:
+        case 9:
+        case 11:
+            if(date > 30) return undefined;
+            break;
+        case 2:
+            if(isLeapyear && date > 29) return undefined;
+            else if (!isLeapyear && date > 28) return undefined;
+            break;
+        default:
+            return undefined;
+    }
+
+    if(hour < 0 || hour >= 24) return undefined;
+    if(minute < 0 || minute >= 60) return undefined;
+    if(second < 0 || second >= 60) return undefined;
+    
+    return new Date(date_str + "T" + time_str + "+00:00");
+}
+
 module.exports.createNewCode = function () {
     return crypto.randomBytes(6).toString("Base64");
 }
@@ -82,7 +140,6 @@ module.exports.verifyToken = function (token, user_id) {
         if (e.name == "TokenExpiredError") {
             return this.ERROR_EXPIRED_TOKEN;
         }
-
         return this.ERROR_INVALID_TOKEN;
     }
 }
