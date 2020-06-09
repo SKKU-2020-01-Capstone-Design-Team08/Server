@@ -265,3 +265,20 @@ url : http://34.64.124.225
 	- 200 : Success
 	- 400 : Else
 	- 401 : Invalid Params
+
+### /get-location
+- Get
+- 애완동물 가장 최근 위치 받기 (Server -> App)
+- Receive
+	- token : header["x-access-token"]에 설정
+	- pet_id
+- Send
+	- 200 : Success
+		- time : YYYY-MM-DD HH:MM:SS 포멧으로 전송. GMT+0900 사용.
+		- location
+			- lon : longitude
+			- lat : latitude
+	- 400 : Else
+	- 401 : Invalid Params
+	- 403 : Invalid Token
+	- 405 : Expired Token

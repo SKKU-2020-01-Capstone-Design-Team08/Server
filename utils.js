@@ -52,7 +52,7 @@ module.exports.isEmail = function (string) {
     return email_regExp.test(string);
 }
 
-module.exports.getDate = function(string) {
+module.exports.convertDateTimeToISO = function(string) {
     var datetime_regExp = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/;
     if(!datetime_regExp.test(string)) return undefined;
 
@@ -108,6 +108,19 @@ module.exports.getDate = function(string) {
     if(second < 0 || second >= 60) return undefined;
     
     return new Date(date_str + "T" + time_str + "+00:00");
+}
+
+module.exports.convertISOToDatetime = function(string) {
+    var input = new Date(string);
+
+    var year = input.getFullYear();
+    var month = ("0" + (input.getMonth() + 1)).slice(-2);
+    var date = ("0" + input.getDate()).slice(-2);
+    var hour = ("0" + input.getHours()).slice(-2);
+    var minute = ("0" + input.getMinutes()).slice(-2);
+    var second = ("0" + input.getSeconds()).slice(-2);
+
+    return year + "-" + month + "-" + date + " " + hour + ":" + minute + ":" + second;
 }
 
 module.exports.createNewCode = function () {

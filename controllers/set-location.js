@@ -12,7 +12,7 @@ module.exports = function (req, res, next) {
     var pi_mac = req.query.wifi_mac;
     var longitude = req.query.location.lon;
     var latitude = req.query.location.lat;
-    var time = utils.getDate(req.query.time);
+    var time = utils.convertDateTimeToISO(req.query.time);
 
     if(pi_mac === undefined || pi_mac.length != 17
         || location === undefined || location.length == 0
@@ -31,13 +31,14 @@ module.exports = function (req, res, next) {
         }
 
         var pet_id = qresult[0]["pet_id"];
+        var location = longitude + " " + latitude
 
         connection.query("INSERT INTO " +
                                 "Location(pet_id, time, location) " +
                             "VALUES (" +
                                 mysql.escape(pet_id) + ", " + 
                                 mysql.escape(time.toISOString()) + ", " +
-                                mysql.escape(longitude + " " + latitude) + ")");
+                                mysql.escape(location) + ")");
 
         utils.log(logger_caller, "Success", logger_args);
         res.sendStatus(200);
