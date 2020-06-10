@@ -5,47 +5,49 @@ var sync_mysql = require("sync-mysql");
 var db_config = require("../config/db");
 var connection = new sync_mysql(db_config);
 
-module.exports = function (req, res, next) {
-    var logger_caller = "/login(POST)";
-    var logger_args = {"email": req.body.email, "pw_hashed": req.body.pw_hashed};
+module.exports = function(req, res, next) {
+    var logger_caller = "/user-info(GET)";
+    var logger_args = {"user_id": req.query.user_id, "token": req.headers["x-access-token"] };
 
-    var email = req.body.email;
-    var pw_from_client = req.body.pw_hashed;
+    var user_id = req.query.user_id;
+    var token = req.headers["x-access-token"];
 
-    if(email === undefined || email.length == 0 || !utils.isEmail(email)
-        || pw_from_client === undefined || pw_from_client.length != 45) {
+    if(user_id === undefined || user_id.length == 0) {
         utils.log(logger_caller, "Error - Invalid params", logger_args, "y");
         res.sendStatus(401);
+        return;
+    }
+
+    var token_verification_result = utils.verifyToken(token, user_id);
+    if(token_verification_result == utils.ERROR_EXPIRED_TOKEN) {
+        utils.log(logger_caller, "Error - Token expired", logger_args);
+        res.sendStatus(405);
+        return;
+    } else if (token_verification_result == utils.ERROR_INVALID_TOKEN) {
+        utils.log(logger_caller, "Error - Invalid token", logger_args);
+        res.sendStatus(403);
         return;
     }
 
     try {
         var qresult;
         qresult = connection.query("SELECT " +
-                                        "id, pw_hashed, salt, first_name, last_name, phone_number " +
+                                        "email, first_name, last_name, phone_number " +
                                     "FROM " + 
                                         "User " + 
                                     "WHERE " + 
-                                        "email=" + mysql.escape(email));
+                                        "id=" + mysql.escape(user_id));
 
         if(qresult.length == 0) {
-            utils.log(logger_caller, "Error - No such email", logger_args, "y");
+            utils.log(logger_caller, "Error - Invalid Params", logger_args, "y");
             res.sendStatus(401);
             return;
         }
 
-        if(qresult[0]["pw_hashed"] != utils.hash(pw_from_client, qresult[0]["salt"])) {
-            utils.log(logger_caller, "Error - pw_hashed not matching", logger_args, "y");
-            res.sendStatus(401);
-            return;
-        }
-
-        var user_id = qresult[0]["id"];
+        var email = qresult[0]["email"];
         var user_first_name = qresult[0]["first_name"];
         var user_last_name = qresult[0]["last_name"];
         var user_phone_number = qresult[0]["phone_number"];
-
-        var token = utils.createNewToken(user_id);
 
         qresult = connection.query("SELECT " +
                                         "pet_id, name, species, description, photo_id, arduino_mac, pi_mac " +
@@ -67,7 +69,7 @@ module.exports = function (req, res, next) {
             });
         }
 
-        utils.log(logger_caller, "Success - " + token, logger_args);
+        utils.log(logger_caller, "Success", logger_args);
         res.status(200).json({
             "user_id": user_id,
             "email": email,
@@ -85,4 +87,3 @@ module.exports = function (req, res, next) {
         return;
     }
 }
-

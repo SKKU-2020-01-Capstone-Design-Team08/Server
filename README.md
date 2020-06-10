@@ -282,3 +282,44 @@ url : http://34.64.124.225
 	- 401 : Invalid Params
 	- 403 : Invalid Token
 	- 405 : Expired Token
+
+### /user-info
+- Get
+- 사용자 정보 받기
+- Receive
+	- token : header["x-access-token"]에 설정
+	- user_id
+- Send
+	- 200 : Success
+		- user_id
+		- email
+		- token : receive 했던것과 똑같은 token 재전송 (`/login`과의 일관성 유지를 위해)
+		- first_name
+		- last_name
+		- phone_number
+		- pets [Array]
+			- pet_id
+			- name
+			- species
+			- description
+			- photo_id
+			- arduino_mac
+			- pi_mac
+	- 400 : Else
+	- 401 : Invalid Params
+	- 403 : Invalid Token
+	- 405 : Expired Token
+
+### /refresh-token
+- Get
+- 토큰 최신화
+- Receive
+	- token : header["x-access-token"]에 설정
+	- user_id
+- Send
+	- 200 : Success
+		- token
+	- 400 : Else
+	- 401 : Invalid Params
+	- 403 : Invalid Token
+	- 405 : Expired Token

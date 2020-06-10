@@ -21,6 +21,10 @@ router.get("/set-location", require("./controllers/set-location"));
 
 router.get("/get-location", require("./controllers/get-location"));
 
+router.get("/user-info", require("./controllers/user-info"));
+
+router.get("/refresh-token", require("./controllers/refresh-token"));
+
 router.post("/test", require("./controllers/test"));
 
 module.exports = router;

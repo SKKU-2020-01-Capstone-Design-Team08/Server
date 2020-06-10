@@ -51,7 +51,9 @@ module.exports = function(req, res, next) {
             };
 
             transporter.sendMail(mail, function(err, info) {
-                if(err) throw err;
+                if(err) {
+                    utils.log(logger_caller, "Failed to send Email", logger_args, "r");
+                }
 
                 utils.log(logger_caller, "Success", logger_args);
 
@@ -61,7 +63,6 @@ module.exports = function(req, res, next) {
             return;
         }
     } catch(e) {
-        //throw e;
         utils.log(logger_caller, "Error - " + e, logger_args);
         res.sendStatus(400);
         return;

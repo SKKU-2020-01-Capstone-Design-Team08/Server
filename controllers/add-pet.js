@@ -16,11 +16,14 @@ module.exports = function (req, res, next) {
     var description = req.body.description;
     var arduino_mac = req.body.arduino_mac;
     var pi_mac = req.body.pi_mac;
-    
 
-    if(!token) {
-        utils.log(logger_caller, "Error - Invalid token", logger_args, "y");
-        res.sendStatus(403);
+    if(user_id === undefined || user_id.length == 0
+        || name === undefined || name.length == 0
+        || species === undefined || species.length == 0
+        || arduino_mac === undefined || arduino_mac.length != 17
+        || pi_mac === undefined || pi_mac.length != 17) {
+        utils.log(logger_caller, "Error - Invalid params", logger_args, "y");
+        res.sendStatus(401);
         return;
     }
 
@@ -32,16 +35,6 @@ module.exports = function (req, res, next) {
     } else if (token_verification_result == utils.ERROR_INVALID_TOKEN) {
         utils.log(logger_caller, "Error - Invalid token", logger_args, "y");
         res.sendStatus(403);
-        return;
-    }
-
-    if(user_id === undefined || user_id.length == 0
-        || name === undefined || name.length == 0
-        || species === undefined || species.length == 0
-        || arduino_mac === undefined || arduino_mac.length != 17
-        || pi_mac === undefined || pi_mac.length != 17) {
-        utils.log(logger_caller, "Error - Invalid params", logger_args, "y");
-        res.sendStatus(401);
         return;
     }
 

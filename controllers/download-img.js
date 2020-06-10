@@ -15,10 +15,12 @@ module.exports = function (req, res, next) {
     var pet_id = req.query.pet_id;
     var photo_id = req.query.photo_id;
     var token = req.headers["x-access-token"];
-
-    if(!token) {
-        utils.log(logger_caller, "Error - Invalid token", logger_args, "y");
-        res.sendStatus(403);
+    
+    if(user_id === undefined || user_id.length == 0
+        || pet_id === undefined || pet_id.length == 0
+        || photo_id === undefined || photo_id.length == 0) {
+        utils.log(logger_caller, "Error - Invalid params", logger_args, "y");
+        res.sendStatus(401);
         return;
     }
 
@@ -30,14 +32,6 @@ module.exports = function (req, res, next) {
     } else if (token_verification_result == utils.ERROR_INVALID_TOKEN) {
         utils.log(logger_caller, "Error - Invalid token", logger_args, "y");
         res.sendStatus(403);
-        return;
-    }
-
-    if(user_id === undefined || user_id.length == 0
-        || pet_id === undefined || pet_id.length == 0
-        || photo_id === undefined || photo_id.length == 0) {
-        utils.log(logger_caller, "Error - Invalid params", logger_args, "y");
-        res.sendStatus(401);
         return;
     }
 
@@ -68,6 +62,6 @@ module.exports = function (req, res, next) {
     } catch(e) {
         utils.log(logger_caller, "Error - " + e, logger_args, "r");
         res.sendStatus(400);
-        throw e;
+        return;
     }
 }
