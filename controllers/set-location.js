@@ -7,15 +7,16 @@ var connection = new sync_mysql(db_config);
 
 module.exports = function (req, res, next) {
     var logger_caller = "/set-location(GET)";
-    var logger_args = { "pi_mac": req.query.wifi_mac, "location": { "longitude": req.query.location.lon, "latitude": req.query.location.lat }, "time": req.query.time };
+    var logger_args = { "pi_mac": req.query.wifi_mac, "longitude": req.query.longitude, "latitude": req.query.latitude, "time": req.query.time };
 
     var pi_mac = req.query.wifi_mac;
-    var longitude = req.query.location.lon;
-    var latitude = req.query.location.lat;
+    var longitude = req.query.longitude;
+    var latitude = req.query.latitude;
     var time = utils.convertDateTimeToISO(req.query.time);
 
     if(pi_mac === undefined || pi_mac.length != 17
-        || location === undefined || location.length == 0
+        || longitude === undefined || longitude.length == 0
+        || latitude === undefined || latitude.length == 0
         || time === undefined) {
         utils.log(logger_caller, "Error - Invalid params", logger_args, "y");
         res.sendStatus(401);

@@ -48,8 +48,8 @@ module.exports = function (req, res, next) {
         res.status(200).json({
             "time": time,
             "location": {
-                "lon": longitude,
-                "lat": latitude
+                "longitude": longitude,
+                "latitude": latitude
             }
         });
         return;

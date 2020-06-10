@@ -257,9 +257,8 @@ url : http://34.64.124.225
 - 애완동물 위치 등록 (RaspberryPi -> Server)
 - Receive
 	- wifi_mac : 내부적으로는 pi_mac으로 처리됨
-	- location
-		- lon : longitude
-		- lat : latitude
+	- longitude
+	- latitude
 	- time : YYYY-MM-DD HH:MM:SS 포멧으로 전송. GMT+0000 사용.
 - Send
 	- 200 : Success
@@ -276,8 +275,8 @@ url : http://34.64.124.225
 	- 200 : Success
 		- time : YYYY-MM-DD HH:MM:SS 포멧으로 전송. GMT+0900 사용.
 		- location
-			- lon : longitude
-			- lat : latitude
+			- longitude
+			- latitude
 	- 400 : Else
 	- 401 : Invalid Params
 	- 403 : Invalid Token
