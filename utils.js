@@ -44,7 +44,7 @@ module.exports.hash = function (string, salt) {
 }
 
 module.exports.createNewSalt = function () {
-    return crypto.randomBytes(32).toString("Base64");
+    return crypto.randomBytes(24).toString("Base64");
 }
 
 module.exports.isEmail = function (string) {
@@ -52,9 +52,9 @@ module.exports.isEmail = function (string) {
     return email_regExp.test(string);
 }
 
-module.exports.convertDateTimeToISO = function(string) {
+module.exports.isValidDatetime = function(string) {
     var datetime_regExp = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/;
-    if(!datetime_regExp.test(string)) return undefined;
+    if(!datetime_regExp.test(string)) return false;
 
     var temp, date_str, time_str, year, date, month, hour, minute, second;
     temp = string.split(" ");
@@ -76,9 +76,9 @@ module.exports.convertDateTimeToISO = function(string) {
         isLeapyear = true;
     }
 
-    if(month < 1 || month > 12) return undefined;
+    if(month < 1 || month > 12) return false;
 
-    if(date < 1) return undefined;
+    if(date < 1) return false;
     switch(month) {
         case 1:
         case 3:
@@ -87,27 +87,28 @@ module.exports.convertDateTimeToISO = function(string) {
         case 8:
         case 10:
         case 12:
-            if(date > 31) return undefined;
+            if(date > 31) return false;
             break;
         case 4:
         case 6:
         case 9:
         case 11:
-            if(date > 30) return undefined;
+            if(date > 30) return false;
             break;
         case 2:
-            if(isLeapyear && date > 29) return undefined;
-            else if (!isLeapyear && date > 28) return undefined;
+            if(isLeapyear && date > 29) return false;
+            else if (!isLeapyear && date > 28) return false;
             break;
         default:
-            return undefined;
+            return false;
     }
 
-    if(hour < 0 || hour >= 24) return undefined;
-    if(minute < 0 || minute >= 60) return undefined;
-    if(second < 0 || second >= 60) return undefined;
+    if(hour < 0 || hour >= 24) return false;
+    if(minute < 0 || minute >= 60) return false;
+    if(second < 0 || second >= 60) return false;
     
-    return new Date(date_str + "T" + time_str + "+00:00");
+    //return new Date(date_str + "T" + time_str + "+00:00");
+    return true;
 }
 
 module.exports.convertISOToDatetime = function(string) {
@@ -134,7 +135,7 @@ module.exports.createNewToken = function (user_id) {
         },
         secret.jwt_secret,
         {
-            expiresIn: 300,
+            expiresIn: 3600,
             issuer: "snoot",
             audience: String(user_id)
         }

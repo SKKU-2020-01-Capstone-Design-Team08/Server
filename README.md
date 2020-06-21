@@ -25,7 +25,7 @@ url : http://34.64.124.225
 	- char(64)
 	- not null
 - salt
-	- char(10)
+	- char(32)
 	- not null
 - first_name
 	- varchar(200)
@@ -34,7 +34,7 @@ url : http://34.64.124.225
 - phone_number
 	- varchar(50)
 
-`create table User(id int primary key auto_increment, email varchar(200) unique not null, pw_hashed char(64) not null, salt char(10) not null, first_name varchar(200), last_name varchar(200), phone_number varchar(50));`
+`create table User(id int primary key auto_increment, email varchar(200) unique not null, pw_hashed char(64) not null, salt char(32) not null, first_name varchar(200), last_name varchar(200), phone_number varchar(50));`
 
 ### Pet
 - pet_id
@@ -57,11 +57,13 @@ url : http://34.64.124.225
 - arduino_mac
 	- char(17)
 	- not null
+	- unique
 - pi_mac
 	- char(17)
 	- not null
+	- unique
 
-`create table Pet(pet_id int primary key auto_increment, user_id int not null, name varchar(200) not null, species varchar(200) not null, description varchar(500), photo_id int, arduino_mac char(17) not null, pi_mac char(17) not null);`
+`create table Pet(pet_id int primary key auto_increment, user_id int not null, name varchar(200) not null, species varchar(200) not null, description varchar(500), photo_id int, arduino_mac char(17) not null unique, pi_mac char(17) not null unique);`
 
 ### Photo
 - photo_id
@@ -78,20 +80,20 @@ url : http://34.64.124.225
 	- varchar(200)
 	- not null
 
-`create table Photo(pet_id int primary key auto_increment, user_id int not null, pet_id int not null, path varchar(200) not null);`
+`create table Photo(photo_id int primary key auto_increment, user_id int not null, pet_id int not null, path varchar(200) not null);`
 
 ### Location
 - pet_id
 	- int
 	- primary key
 - time
-	- timestamp
+	- datetime
 	- primary key
 - location
 	- varchar(50)
 	- not null
 
-`create table Location(pet_id int, time timestamp, location varchar(50) not null, primary key(pet_id, time));`
+`create table Location(pet_id int, time datetime, location varchar(50) not null, primary key(pet_id, time));`
 
 ### User_Auth
 - auth_id
@@ -108,14 +110,14 @@ url : http://34.64.124.225
 	- char(8)
 	- not null
 - created_time
-	- timestamp
+	- datetime
 	- not null
 - is_verified
 	- bool
 - verified_time
-	- timestamp
+	- datetime
 
-`create table User_Auth(auth_id int auto_increment primary key, user_id int not null, email varchar(200) not null, code char(8) not null, created_time timestamp not null, is_verified bool, verified_time timestamp);`
+`create table User_Auth(auth_id int auto_increment primary key, user_id int not null, email varchar(200) not null, code char(8) not null, created_time datetime not null, is_verified bool, verified_time datetime);`
 
 ## Features
 ### /login
@@ -270,6 +272,7 @@ url : http://34.64.124.225
 - 애완동물 가장 최근 위치 받기 (Server -> App)
 - Receive
 	- token : header["x-access-token"]에 설정
+	- user_id
 	- pet_id
 - Send
 	- 200 : Success

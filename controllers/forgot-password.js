@@ -63,7 +63,7 @@ module.exports = function(req, res, next) {
             return;
         }
     } catch(e) {
-        utils.log(logger_caller, "Error - " + e, logger_args);
+        utils.log(logger_caller, "Error - " + e, logger_args, "r");
         res.sendStatus(400);
         return;
     }

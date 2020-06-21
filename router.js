@@ -25,6 +25,6 @@ router.get("/user-info", require("./controllers/user-info"));
 
 router.get("/refresh-token", require("./controllers/refresh-token"));
 
-router.post("/test", require("./controllers/test"));
+router.get("/test", require("./controllers/test"));
 
 module.exports = router;

@@ -12,12 +12,12 @@ module.exports = function (req, res, next) {
     var pi_mac = req.query.wifi_mac;
     var longitude = req.query.longitude;
     var latitude = req.query.latitude;
-    var time = utils.convertDateTimeToISO(req.query.time);
+    var time = req.query.time;
 
     if(pi_mac === undefined || pi_mac.length != 17
         || longitude === undefined || longitude.length == 0
         || latitude === undefined || latitude.length == 0
-        || time === undefined) {
+        || time === undefined || !utils.isValidDatetime(time)) {
         utils.log(logger_caller, "Error - Invalid params", logger_args, "y");
         res.sendStatus(401);
         return;
@@ -32,13 +32,13 @@ module.exports = function (req, res, next) {
         }
 
         var pet_id = qresult[0]["pet_id"];
-        var location = longitude + " " + latitude
-
+        var location = longitude + " " + latitude;
+        
         connection.query("INSERT INTO " +
                                 "Location(pet_id, time, location) " +
                             "VALUES (" +
                                 mysql.escape(pet_id) + ", " + 
-                                mysql.escape(time.toISOString()) + ", " +
+                                mysql.escape(time) + ", " +
                                 mysql.escape(location) + ")");
 
         utils.log(logger_caller, "Success", logger_args);

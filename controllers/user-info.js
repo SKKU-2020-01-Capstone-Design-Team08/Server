@@ -20,11 +20,11 @@ module.exports = function(req, res, next) {
 
     var token_verification_result = utils.verifyToken(token, user_id);
     if(token_verification_result == utils.ERROR_EXPIRED_TOKEN) {
-        utils.log(logger_caller, "Error - Token expired", logger_args);
+        utils.log(logger_caller, "Error - Token expired", logger_args, "y");
         res.sendStatus(405);
         return;
     } else if (token_verification_result == utils.ERROR_INVALID_TOKEN) {
-        utils.log(logger_caller, "Error - Invalid token", logger_args);
+        utils.log(logger_caller, "Error - Invalid token", logger_args, "y");
         res.sendStatus(403);
         return;
     }

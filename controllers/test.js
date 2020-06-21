@@ -1,13 +1,11 @@
 var utils = require("../utils");
 
 module.exports = function(req, res, next) {
-    var logger_caller = "/test(POST)";
-    var logger_args = { "pet_id": req.body.petId };
-
-    var pet_id = req.body.petId;
+    var logger_caller = "/test(GET)";
+    var logger_args = {  };
 
     res.status(200).json({
-        "msg": "Received [" + pet_id + "]"
+        "msg": "Hi!"
     });
 
     utils.log(logger_caller, "Success", logger_args);

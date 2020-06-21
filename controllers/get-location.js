@@ -7,24 +7,26 @@ var connection = new sync_mysql(db_config);
 
 module.exports = function (req, res, next) {
     var logger_caller = "/get-location(GET)";
-    var logger_args = { "pet_id": req.query.pet_id, "token": req.headers["x-access-token"] };
+    var logger_args = { "pet_id": req.query.pet_id, "user_id": req.query.user_id, "token": req.headers["x-access-token"] };
 
     var pet_id = req.query.pet_id;
+    var user_id = req.query.user_id;
     var token = req.headers["x-access-token"]
     
-    if(pet_id === undefined || pet_id.length == 0) {
-        utils.log(logger_caller, "Error - Invalid params", logger_args);
+    if(pet_id === undefined || pet_id.length == 0
+        || user_id === undefined || user_id.length == 0) {
+        utils.log(logger_caller, "Error - Invalid params", logger_args, "y");
         res.sendStatus(401);
         return;
     }
 
     var token_verification_result = utils.verifyToken(token, user_id);
     if(token_verification_result == utils.ERROR_EXPIRED_TOKEN) {
-        utils.log(logger_caller, "Error - Token expired", logger_args);
+        utils.log(logger_caller, "Error - Token expired", logger_args, "y");
         res.sendStatus(405);
         return;
     } else if (token_verification_result == utils.ERROR_INVALID_TOKEN) {
-        utils.log(logger_caller, "Error - Invalid token", logger_args);
+        utils.log(logger_caller, "Error - Invalid token", logger_args, "y");
         res.sendStatus(403);
         return;
     }
